@@ -6,7 +6,7 @@ package socialmediaplatform;
 
 /**
  *
- * @author PC
+ * @author moaz1
  */
 public class SocialMediaPlatform {
 
