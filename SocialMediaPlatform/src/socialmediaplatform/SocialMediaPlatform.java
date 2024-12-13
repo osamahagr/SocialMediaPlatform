@@ -4,6 +4,9 @@
  */
 package socialmediaplatform;
 
+import Model.Database;
+import View.Welcome;
+
 /**
  *
  * @author moaz1
@@ -14,7 +17,6 @@ public class SocialMediaPlatform {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
-    }
+ new Welcome(new Database());     }
     
 }

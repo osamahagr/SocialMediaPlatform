@@ -10,14 +10,18 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class Database {
-        private static final String USERS_FILE = "users.json";
+
+    private static final String USERS_FILE = "users.json";
+
     private static final String POSTS_FILE = "posts.json";
     private static final String COMMENTS_FILE = "comments.json";
     private static final String LIKES_FILE = "likes.json";
     private static final String FRIENDS_FILE = "friends.json";
+
     private static final String FRIEND_REQUESTS_FILE = "friend_requests.json";
     private static final String GROUPS_FILE = "groups.json";
     private static final String GROUP_MEMBERSHIPS_FILE = "group_memberships.json";
+
 
 
     public Database() {
@@ -28,19 +32,21 @@ public class Database {
         }
     }
 
-   
+
     private void initializeDatabase() throws IOException {
         createFileIfNotExists(USERS_FILE);
         createFileIfNotExists(POSTS_FILE);
         createFileIfNotExists(COMMENTS_FILE);
         createFileIfNotExists(LIKES_FILE);
         createFileIfNotExists(FRIENDS_FILE);
+
         createFileIfNotExists(FRIEND_REQUESTS_FILE);
         createFileIfNotExists(GROUPS_FILE);
         createFileIfNotExists(GROUP_MEMBERSHIPS_FILE);
     }
 
       private void createFileIfNotExists(String fileName) throws IOException {
+
         File file = new File(fileName);
         if (!file.exists()) {
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
@@ -48,7 +54,6 @@ public class Database {
             }
         }
     }
-
 
     // -------------------- User Methods --------------------
     public JSONArray getUsers() {
@@ -241,8 +246,10 @@ public void addFriend(String userId, String friendId) {
     }
 
     public void addPost(JSONObject newPost) {
+
         if (!newPost.has("contentId")) {
             newPost.put("contentId", UUID.randomUUID().toString());
+
         }
         JSONArray posts = getPosts();
         posts.put(newPost);
@@ -268,6 +275,7 @@ public void addFriend(String userId, String friendId) {
     // Save the updated list back to the file
     saveToFile(POSTS_FILE, updatedPosts);
 }
+
 
 
 //    public void removeExpiredStories() {
@@ -347,6 +355,7 @@ public void addFriend(String userId, String friendId) {
         }
         saveToFile(LIKES_FILE, likes);
     }
+
  
     // -------------------- Group Methods --------------------
 
@@ -398,6 +407,7 @@ public void addFriend(String userId, String friendId) {
 
 
 
+
     // -------------------- Utility Methods --------------------
     private JSONArray readFromFile(String fileName) {
         try {
@@ -422,6 +432,4 @@ public void addFriend(String userId, String friendId) {
         }
     }
 }
-
-
 
