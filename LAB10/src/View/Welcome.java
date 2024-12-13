@@ -20,7 +20,7 @@ public class Welcome {
 
     public Welcome(Database database) {
         JFrame frame = new JFrame();
-                frame.setResizable(false);
+        frame.setResizable(false);
 
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(null);
@@ -89,52 +89,54 @@ public class Welcome {
                     new Alert("Password doesn't match", frame);
                     return;
                 }
-     try {
-            // Create a temporary user object for validation
-            User tempUser = new User();
-            tempUser.setEmail(email.getText().trim());
+                try {
+                    // Create a temporary user object for validation
+                    User tempUser = new User();
+                    tempUser.setEmail(email.getText().trim());
 
-            CreateUser createUser = new CreateUser(tempUser, database);
+                    CreateUser createUser = new CreateUser(tempUser, database);
 
-            // Check if email is already used
-            if (createUser.isEmailUsed()) {
-                new Alert("This email has been used before", frame);
-                return;
+                    // Check if email is already used
+                    if (createUser.isEmailUsed()) {
+                        new Alert("This email has been used before", frame);
+                        return;
+                    }
+
+                    //Proceed with creating the user
+                    User user = new User();
+                    user.setFirstName(firstName.getText().trim());
+                    user.setLastName(lastName.getText().trim());
+                    if (!EmailValidator.isValidEmail(email.getText().trim())) {
+                        new Alert("Invalid email format", frame);
+                        return;
+                    }
+                    user.setEmail(email.getText().trim());
+                    user.setHashedPassword(PasswordHasher.hashPassword(password.getText().trim()));
+
+                    createUser = new CreateUser(user, database);
+                    createUser.create();
+
+                    // Verify if the user was successfully created
+                    User createdUser = createUser.getUser(email.getText().trim(), user.getHashedPassword());
+                    if (createdUser != null) {
+                        new Home(createdUser, database);
+                        frame.dispose();
+                    } else {
+                        new Alert("Failed to create user. Please try again.", frame);
+                    }
+                } catch (Exception ex) {
+                    new Alert("Error creating account: " + ex.getMessage(), frame);
+                }
             }
-
-             //Proceed with creating the user
-            User user = new User();
-            user.setFirstName(firstName.getText().trim());
-            user.setLastName(lastName.getText().trim());
-             if (!EmailValidator.isValidEmail(email.getText().trim())) {
-            new Alert("Invalid email format", frame);
-            return;
-        }
-            user.setEmail(email.getText().trim());
-            user.setHashedPassword(PasswordHasher.hashPassword(password.getText().trim()));
-
-            createUser = new CreateUser(user, database);
-            createUser.create();
-
-            // Verify if the user was successfully created
-            User createdUser = createUser.getUser(email.getText().trim(), user.getHashedPassword());
-            if (createdUser != null) {
-                new Home(createdUser, database);
-                frame.dispose();
-            } else {
-                new Alert("Failed to create user. Please try again.", frame);
-            }
-        } catch (Exception ex) {
-            new Alert("Error creating account: " + ex.getMessage(), frame);
-        }}
-});
+        });
 
         center.add(createAcc);
 
         panel.add(center, BorderLayout.CENTER);
 
-JLabel login = new JLabel("Already have an account? Login", 20,
-				GUIConstants.black, Font.BOLD);        login.addMouseListener(new MouseListener() {
+        JLabel login = new JLabel("Already have an account? Login", 20,
+                GUIConstants.black, Font.BOLD);
+        login.addMouseListener(new MouseListener() {
             @Override
             public void mouseReleased(MouseEvent e) {
             }
@@ -167,7 +169,4 @@ JLabel login = new JLabel("Already have an account? Login", 20,
         frame.requestFocus();
     }
 
-
- 
 }
- 

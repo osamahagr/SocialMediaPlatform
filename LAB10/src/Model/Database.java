@@ -1,5 +1,7 @@
 package Model;
 
+import Controller.Notification;
+import Controller.NotificationFactory;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import View.Alert;
@@ -18,6 +20,7 @@ public class Database {
     private static final String FRIEND_REQUESTS_FILE = "friend_requests.json";
     private static final String GROUPS_FILE = "groups.json";
     private static final String GROUP_MEMBERSHIPS_FILE = "group_memberships.json";
+    private static final String NOTIFICATIONS_FILE = "notifications.json";
 
 
     public Database() {
@@ -38,6 +41,8 @@ public class Database {
         createFileIfNotExists(FRIEND_REQUESTS_FILE);
         createFileIfNotExists(GROUPS_FILE);
         createFileIfNotExists(GROUP_MEMBERSHIPS_FILE);
+        createFileIfNotExists(NOTIFICATIONS_FILE);
+
     }
 
       private void createFileIfNotExists(String fileName) throws IOException {
@@ -225,6 +230,35 @@ public void addFriend(String userId, String friendId) {
     return likedPostIds;  // Return the list of liked post IDs as Strings
 }
 
+     // -------------------- Notification Methods --------------------
+public void saveNotification(Notification notification) {
+        JSONArray notifications = readFromFile(NOTIFICATIONS_FILE);
+        JSONObject json = new JSONObject();
+        json.put("message", notification.getMessage());
+        json.put("recipientId", notification.getRecipientId());
+        json.put("type", notification.getType());
+        notifications.put(json);
+        saveToFile(NOTIFICATIONS_FILE,notifications);
+    }
+
+    public List<Notification> getNotificationsForUser(String userId) {
+        JSONArray notifications = readFromFile(NOTIFICATIONS_FILE);
+        List<Notification> userNotifications = new ArrayList<>();
+        for (Object obj : notifications) {
+            JSONObject json = (JSONObject) obj;
+            if (json.getString("recipientId").equals(userId)) {
+                userNotifications.add(NotificationFactory.createNotification(
+                        json.getString("type"),
+                        json.optString("senderId", ""),
+                        json.optString("recipientId", ""),
+                        json.optString("activity", "")
+                ));
+            }
+        }
+        return userNotifications;
+    }
+    
+    
     // -------------------- Post Methods --------------------
     public JSONArray getPosts() {
         return readFromFile(POSTS_FILE);
@@ -351,16 +385,19 @@ public void addFriend(String userId, String friendId) {
     // -------------------- Group Methods --------------------
 
 
+    // Create a new group
     public void createGroup(JSONObject group) {
         JSONArray groups = getGroups();
         groups.put(group);
         saveToFile(GROUPS_FILE, groups);
     }
 
+    // Get all groups
     public JSONArray getGroups() {
         return readFromFile(GROUPS_FILE);
     }
 
+    // Get a group by its ID
     public Optional<JSONObject> getGroupById(String groupId) {
         for (Object groupObj : getGroups()) {
             JSONObject group = (JSONObject) groupObj;
@@ -371,19 +408,21 @@ public void addFriend(String userId, String friendId) {
         return Optional.empty();
     }
 
+    // Update a group
   public void updateGroup(JSONObject updatedGroup) {
     JSONArray groups = getGroups();
     for (int i = 0; i < groups.length(); i++) {
         JSONObject group = groups.getJSONObject(i);
         if (group.getString("groupId").equals(updatedGroup.getString("groupId"))) {
-            groups.put(i, updatedGroup); 
+            groups.put(i, updatedGroup); // Update the group in the array
             break;
         }
     }
-    saveToFile(GROUPS_FILE, groups); 
+    saveToFile(GROUPS_FILE, groups); // Save the updated array back to the file
 }
 
 
+    // Delete a group
     public void deleteGroup(String groupId) {
         JSONArray groups = getGroups();
         for (int i = 0; i < groups.length(); i++) {

@@ -29,6 +29,7 @@ public class GroupController {
         return newGroup;
     }
 
+    // Add a post to a group (Only Admins and Primary Admin can manage posts)
     public void addPostToGroup(String groupId, String authorId, String content) {
     Optional<Group> groupOpt = getGroupById(groupId);
     if (groupOpt.isPresent()) {

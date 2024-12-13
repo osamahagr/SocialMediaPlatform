@@ -22,14 +22,14 @@ public class GenerateTimeline {
             // Get the IDs of the user's friends, including the user itself
             List<String> userAndFriendsIDs = new ArrayList<>();
             userAndFriendsIDs.add(user.getUserID()); // Add the user's own ID
-            userAndFriendsIDs.addAll(database.getFriendsIDs(user.getUserID())); // Add friends' IDs
+            userAndFriendsIDs.addAll(database.getFriendsIDs(user.getUserID()));
 
             // Iterate through all posts
             for (Object obj : allPosts) {
                 // Ensure the object is a valid JSONObject
-                if (!(obj instanceof JSONObject)) {
-                    continue; // Skip invalid entries
-                }
+//                if (!(obj instanceof JSONObject)) {
+//                    continue; // Skip invalid entries
+//                }
 
                 JSONObject postJson = (JSONObject) obj;
 
@@ -46,10 +46,10 @@ public class GenerateTimeline {
                         try {
                             post.setDateTimeFromString(dateTimeString);
                         } catch (Exception e) {
-                            post.setDateTimeFromString(null); // Handle invalid date
+                            post.setDateTimeFromString(null); 
                         }
                     } else {
-                        post.setDateTimeFromString(null); // Handle missing date
+                        post.setDateTimeFromString(null); 
                     }
 
                     // Find the user associated with the post
@@ -75,6 +75,7 @@ public class GenerateTimeline {
     }
 
     public ArrayList<Post> getPosts() {
-        return posts; // Return the list of posts
+        
+        return posts; 
     }
 }

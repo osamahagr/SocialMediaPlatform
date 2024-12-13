@@ -33,6 +33,7 @@ public class AddFriend {
             // Add friendship relation to friends.json
             database.addFriend(user.getUserID(), friend.getUserID());
 
+            // Update user's friendsIDs in users.json
             JSONArray userFriendsIDs = userObj.optJSONArray("friendsIDs");
             if (userFriendsIDs == null) {
                 userFriendsIDs = new JSONArray();

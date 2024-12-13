@@ -14,10 +14,16 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
+
+
 import Controller.CreatePost;
 import Controller.GenerateTimeline;
 import Model.Database;
 import Model.User;
+import java.util.List;
+import org.json.JSONObject;
+import Controller.SearchGroups;
+import Controller.SearchUsers;
 
 public class Home {
 
@@ -116,17 +122,115 @@ public class Home {
                 frame.dispose();
             }
         });
-
         logoutPanel.add(logoutButton);
         sideBar.add(Box.createVerticalGlue());
         sideBar.add(logoutPanel);
 
         frame.getContentPane().add(sideBar, BorderLayout.WEST);
+         
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        searchPanel.setMaximumSize(new Dimension(600, 40));
+        searchPanel.setBackground(GUIConstants.background);
 
+        JTextField searchField = new JTextField("Search for users or groups.");
+        searchField.setPreferredSize(new Dimension(300, 30));
+        searchField.setMaximumSize(new Dimension(300, 30));
+        searchField.setMinimumSize(new Dimension(300, 30));
+
+        JButton searchButton = new JButton("Search", 200, 20);
+        searchButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        searchButton.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                String query = searchField.getText().trim();
+                if (!query.isEmpty()) {
+
+                    SearchUsers searchUsers = new SearchUsers(database);
+                    List<JSONObject> users = searchUsers.searchUsers(query);
+                    SearchGroups searchGroups = new SearchGroups(database);
+                    List<JSONObject> groups = searchGroups.searchGroups(query);
+
+                    // Display search results (for simplicity, replacing the searchPanel content)
+                    searchPanel.removeAll();
+
+                    // Check if any users were found
+                    if (!users.isEmpty()) {
+                        searchPanel.add(new JLabel("Users Found:", 20, GUIConstants.black, Font.BOLD));
+
+                        for (Object foundUser : users) {
+                            if (foundUser instanceof JSONObject) {
+                                JSONObject jsonUser = (JSONObject) foundUser;
+
+                                // Debugging output to inspect the JSON structure
+                                System.out.println(jsonUser.toString());  // Inspect the contents of jsonUser
+
+                                // Safely get the userName
+                                String userName = jsonUser.optString("username", "Unknown User");  // Default to "Unknown User" if key is missing
+
+                                // Ensure the username is not "Unknown User" and print for debugging
+                                if ("Unknown User".equals(userName)) {
+                                    System.out.println("username is missing or invalid.");
+                                }
+
+                                // Create a User object from the JSONObject data
+                              // Set the username
+
+                                // Add the User's username to the search panel
+                                searchPanel.add(new JLabel(userName, 20, GUIConstants.black, Font.BOLD));
+                            }
+                        }
+                    } else {
+                        searchPanel.add(new JLabel("No users found.", 20, GUIConstants.black, Font.BOLD));
+                    }
+
+                    // Check if any groups were found
+                    if (!groups.isEmpty()) {
+                        searchPanel.add(new JLabel("Groups Found:", 20, GUIConstants.black, Font.BOLD));
+                        for (JSONObject foundGroup : groups) {
+                            // Process group data and display group name
+                            // For example, assuming the group name is stored in a key "groupName"
+                            String groupName = foundGroup.optString("name", "Unknown Group");
+                            searchPanel.add(new JLabel(groupName, 20, GUIConstants.black, Font.BOLD));
+                        }
+                    } else {
+                        searchPanel.add(new JLabel("No groups found.", 20, GUIConstants.black, Font.BOLD));
+                    }
+                    // If no users or groups are found, show a "No results found" message
+                    if (users.isEmpty() && groups.isEmpty()) {
+                        searchPanel.add(new JLabel("No results found.", 20, GUIConstants.black, Font.BOLD));
+                    }
+
+                    // Revalidate and repaint the panel to reflect the changes
+                    searchPanel.revalidate();
+                    searchPanel.repaint();
+                }
+            }
+        });
+        
+        searchPanel.add(searchField);
+        searchPanel.add(searchButton);
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setBackground(null);
-
+        
+        panel.setBackground(null); 
+        panel.add(searchPanel);
+        
         JPanel header = new JPanel(new BorderLayout());
         header.setBackground(GUIConstants.white);
         Dimension dimension = new Dimension(500, 159);
@@ -189,6 +293,7 @@ public class Home {
             panel.add(Box.createVerticalStrut(7));
             panel.add(new Post(user, posts.get(i), database, frame));
         }
+
 
         frame.getContentPane().add(new JScrollPane(panel), BorderLayout.CENTER);
         frame.getContentPane().add(Box.createHorizontalStrut(182), BorderLayout.EAST);

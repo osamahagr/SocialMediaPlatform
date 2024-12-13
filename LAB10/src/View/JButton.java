@@ -4,7 +4,6 @@ import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Shape;
-import java.awt.event.ActionListener;
 import java.awt.geom.RoundRectangle2D;
 
 import javax.swing.JLabel;
@@ -44,4 +43,5 @@ public class JButton extends JLabel {
 		}
 		return shape.contains(x, y);
 	}
+
 }

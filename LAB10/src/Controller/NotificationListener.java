@@ -4,10 +4,7 @@
  */
 package Controller;
 
-/**
- *
- * @author Al-Mohtareef
- */
-public class NewClass2 {
-    
+
+public interface NotificationListener {
+    void update(Notification notification);
 }

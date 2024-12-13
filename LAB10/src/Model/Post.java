@@ -11,7 +11,7 @@
         private String authorId;
         private String content;
         private User user;
-        private String imagePath; 
+        private String imagePath; // For optional images
         private LocalDateTime dateTime;
 
         private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");

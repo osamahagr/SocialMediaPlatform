@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 
 public class EmailValidator {
 
+    // Pre-compiled regex pattern for better performance
     private static final Pattern EMAIL_PATTERN = Pattern.compile(
         "^[\\w._%+-]+@[\\w.-]+\\.[a-zA-Z]{2,6}$"
     );
