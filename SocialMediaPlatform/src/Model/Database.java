@@ -10,12 +10,19 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class Database {
+
     private static final String USERS_FILE = "users.json";
+
     private static final String POSTS_FILE = "posts.json";
     private static final String COMMENTS_FILE = "comments.json";
     private static final String LIKES_FILE = "likes.json";
     private static final String FRIENDS_FILE = "friends.json";
-    private static final String FRIEND_REQUESTS_FILE = "friend_requests.json"; 
+
+    private static final String FRIEND_REQUESTS_FILE = "friend_requests.json";
+    private static final String GROUPS_FILE = "groups.json";
+    private static final String GROUP_MEMBERSHIPS_FILE = "group_memberships.json";
+
+
 
     public Database() {
         try {
@@ -25,16 +32,21 @@ public class Database {
         }
     }
 
+
     private void initializeDatabase() throws IOException {
         createFileIfNotExists(USERS_FILE);
         createFileIfNotExists(POSTS_FILE);
         createFileIfNotExists(COMMENTS_FILE);
         createFileIfNotExists(LIKES_FILE);
         createFileIfNotExists(FRIENDS_FILE);
-        createFileIfNotExists(FRIEND_REQUESTS_FILE); // Create requests file
+
+        createFileIfNotExists(FRIEND_REQUESTS_FILE);
+        createFileIfNotExists(GROUPS_FILE);
+        createFileIfNotExists(GROUP_MEMBERSHIPS_FILE);
     }
 
-    private void createFileIfNotExists(String fileName) throws IOException {
+      private void createFileIfNotExists(String fileName) throws IOException {
+
         File file = new File(fileName);
         if (!file.exists()) {
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
@@ -234,8 +246,10 @@ public void addFriend(String userId, String friendId) {
     }
 
     public void addPost(JSONObject newPost) {
-        if (!newPost.has("postId")) {
-            newPost.put("postId", UUID.randomUUID().toString());
+
+        if (!newPost.has("contentId")) {
+            newPost.put("contentId", UUID.randomUUID().toString());
+
         }
         JSONArray posts = getPosts();
         posts.put(newPost);
@@ -245,6 +259,24 @@ public void addFriend(String userId, String friendId) {
     public void savePosts(JSONArray posts) {
         saveToFile(POSTS_FILE, posts);
     }
+
+ public void removePost(String postId) {
+    JSONArray posts = getPosts();
+    JSONArray updatedPosts = new JSONArray();
+
+    // Iterate over the posts and add only the ones that don't match the postId
+    for (int i = 0; i < posts.length(); i++) {
+        JSONObject post = posts.getJSONObject(i);
+        if (!post.getString("contentId").equals(postId)) {
+            updatedPosts.put(post);  // Add post to updated list if it doesn't match
+        }
+    }
+
+    // Save the updated list back to the file
+    saveToFile(POSTS_FILE, updatedPosts);
+}
+
+
 
 //    public void removeExpiredStories() {
 //        JSONArray allPosts = getPosts();
@@ -324,6 +356,57 @@ public void addFriend(String userId, String friendId) {
         saveToFile(LIKES_FILE, likes);
     }
 
+ 
+    // -------------------- Group Methods --------------------
+
+
+    public void createGroup(JSONObject group) {
+        JSONArray groups = getGroups();
+        groups.put(group);
+        saveToFile(GROUPS_FILE, groups);
+    }
+
+    public JSONArray getGroups() {
+        return readFromFile(GROUPS_FILE);
+    }
+
+    public Optional<JSONObject> getGroupById(String groupId) {
+        for (Object groupObj : getGroups()) {
+            JSONObject group = (JSONObject) groupObj;
+            if (group.getString("groupId").equals(groupId)) {
+                return Optional.of(group);
+            }
+        }
+        return Optional.empty();
+    }
+
+  public void updateGroup(JSONObject updatedGroup) {
+    JSONArray groups = getGroups();
+    for (int i = 0; i < groups.length(); i++) {
+        JSONObject group = groups.getJSONObject(i);
+        if (group.getString("groupId").equals(updatedGroup.getString("groupId"))) {
+            groups.put(i, updatedGroup); 
+            break;
+        }
+    }
+    saveToFile(GROUPS_FILE, groups); 
+}
+
+
+    public void deleteGroup(String groupId) {
+        JSONArray groups = getGroups();
+        for (int i = 0; i < groups.length(); i++) {
+            JSONObject group = groups.getJSONObject(i);
+            if (group.getString("groupId").equals(groupId)) {
+                groups.remove(i);  // Remove the group
+                break;
+            }
+        }
+        saveToFile(GROUPS_FILE, groups);
+    }
+
+
+
 
     // -------------------- Utility Methods --------------------
     private JSONArray readFromFile(String fileName) {
@@ -349,3 +432,4 @@ public void addFriend(String userId, String friendId) {
         }
     }
 }
+
