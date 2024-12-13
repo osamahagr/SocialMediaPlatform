@@ -34,10 +34,10 @@ public class GenerateTimeline {
                 JSONObject postJson = (JSONObject) obj;
 
                 // Check if the post belongs to the user or one of the user's friends
-                String userId = postJson.optString("userId", "");
+                String userId = postJson.optString("authorId", "");
                 if (userAndFriendsIDs.contains(userId)) {
                     Post post = new Post();
-                    post.setContentId(postJson.optString("postId")); // Set post ID
+                    post.setContentId(postJson.optString("contentId")); // Set post ID
                     post.setContent(postJson.optString("content", "")); // Set post content
 
                     // Parse and set the post's date and time

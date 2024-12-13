@@ -1,0 +1,34 @@
+[
+     {
+          "lastName": "ahmed",
+          "pendingRequests": [],
+          "hashedPassword": "7QJFe1xB2WTb0vKmCdY/4bt1KNvlXhq/W1LCSc1zV5c=",
+          "bio": "",
+          "dateOfBirth": "",
+          "coverPhotoPath": "",
+          "userId": "883fbef4-13bc-4590-aa8a-defe64deceb8",
+          "firstName": "osama",
+          "profilePhotoPath": "",
+          "likesIDs": [],
+          "friendsIDs": ["78db2745-1c17-477e-abb9-596b9c499d3c"],
+          "email": "a@a.com",
+          "username": "osamaahmed",
+          "status": "offline"
+     },
+     {
+          "lastName": "b",
+          "pendingRequests": [],
+          "hashedPassword": "RiX9Y7Dpb8DWVq5zgWBeSNSg9joxn8dDrfImiGE4g8c=",
+          "bio": "",
+          "dateOfBirth": "",
+          "coverPhotoPath": "",
+          "userId": "78db2745-1c17-477e-abb9-596b9c499d3c",
+          "firstName": "b",
+          "profilePhotoPath": "",
+          "likesIDs": [],
+          "friendsIDs": ["883fbef4-13bc-4590-aa8a-defe64deceb8"],
+          "email": "b@b.com",
+          "username": "bb",
+          "status": "offline"
+     }
+]
